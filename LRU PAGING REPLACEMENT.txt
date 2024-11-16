@@ -1,0 +1,59 @@
+import java.util.*;
+public class Mock{
+    public static void main(String args[]){
+        Scanner s=new Scanner(System.in);
+        System.out.println("Enter length of frames:");
+        int n=s.nextInt();
+        System.out.println("Enter length of reference string:");
+        int t=s.nextInt();
+        int[] ref=new int[t];
+        int[] buff=new int[n];
+        int[][] mem=new int[t][n];
+        System.out.println("enter reference string");
+        for(int i=0;i<t;i++){
+            ref[i]=s.nextInt();
+
+        }
+        Arrays.fill(buff,-1);
+        List<Integer> lru=new ArrayList<>();
+        int hit=0;
+        int fault=0;
+        for(int i=0;i<t;i++){
+            int page=ref[i];
+            if(lru.contains(page)){
+                hit++;
+                lru.remove((Integer)page);
+
+            }else{
+                fault++;
+                if(lru.size()==n){
+                    int x=lru.remove(0);
+                    for(int j=0;j<n;j++){
+                        if(buff[j]==x){
+                            buff[j]=page;
+                            break;
+                        }
+                        
+                    }
+                }
+                else{
+                    buff[lru.size()]=page;
+                }
+            }lru.add(page);
+            for(int j=0;j<n;j++){
+                mem[i][j]=buff[j];
+            }
+        
+        }
+        System.out.println("memory layout");
+        for(int i=0;i<t;i++){
+            for(int j=0;j<n;j++){
+                System.out.println(mem[i][j]+ " ");
+            }System.out.println();
+        }
+        s.close();
+
+
+
+    }
+}

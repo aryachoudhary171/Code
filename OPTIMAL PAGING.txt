@@ -1,0 +1,92 @@
+import java.util.*;
+
+public class Optimal {
+    public static void main(String args[]) {
+        Scanner s = new Scanner(System.in);
+        
+        // Input frame length and reference string length
+        System.out.print("Enter length of frame: ");
+        int n = s.nextInt();
+        System.out.print("Enter length of reference string: ");
+        int t = s.nextInt();
+        
+        int[] ref = new int[t];
+        int[] buf = new int[n];
+        int[][] mem = new int[t][n];
+        
+        // Initialize buffer with -1 to indicate empty slots
+        Arrays.fill(buf, -1);
+        
+        // Input reference string
+        System.out.println("Enter reference string:");
+        for (int i = 0; i < t; i++) {
+            ref[i] = s.nextInt();
+        }
+        
+        int fault = 0; // Counter for page faults
+
+        // Process each page in the reference string
+        for (int i = 0; i < t; i++) {
+            int page = ref[i];
+            boolean hit = false;
+
+            // Check if the page is already in buffer (hit condition)
+            for (int j = 0; j < n; j++) {
+                if (buf[j] == page) {
+                    hit = true;
+                    break;
+                }
+            }
+
+            if (!hit) {
+                fault++; // Increment page fault count
+
+                int replaceIndex = -1;
+                int farthestUse = -1;
+
+                // Find the page to replace based on future use
+                for (int j = 0; j < n; j++) {
+                    if (buf[j] == -1) { // If empty frame is found
+                        replaceIndex = j;
+                        break;
+                    }
+
+                    int nextUse = Integer.MAX_VALUE;
+                    for (int k = i + 1; k < t; k++) {
+                        if (buf[j] == ref[k]) {
+                            nextUse = k;
+                            break;
+                        }
+                    }
+
+                    if (nextUse > farthestUse) {
+                        farthestUse = nextUse;
+                        replaceIndex = j;
+                    }
+                }
+
+                buf[replaceIndex] = page; // Replace the page
+            }
+
+            // Copy the buffer state to memory frame display array
+            System.arraycopy(buf, 0, mem[i], 0, n);
+        }
+
+        // Display results
+        System.out.println("Memory frames:");
+        for (int i = 0; i < t; i++) {
+            for (int j = 0; j < n; j++) {
+                if (mem[i][j] == -1) {
+                    System.out.print("- ");
+                } else {
+                    System.out.print(mem[i][j] + " ");
+                }
+            }
+            System.out.println();
+        }
+
+        System.out.println("Total page faults: " + fault);
+
+        s.close();
+    }
+}

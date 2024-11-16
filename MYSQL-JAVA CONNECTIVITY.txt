@@ -1,0 +1,51 @@
+package MySql;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.sql.ResultSet; // Import ResultSet for query results
+import java.util.Scanner;
+
+public class MySql {
+    public static void main(String[] args) throws Exception {
+        Scanner s = new Scanner(System.in);
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/book", "root", "Arya2004@");
+        Statement stmt = con.createStatement();
+        PreparedStatement pstm = con.prepareStatement("INSERT INTO textbk VALUES (?, ?, ?, ?)");
+
+        System.out.println("Enter number of records:");
+        int n = s.nextInt();
+        s.nextLine(); // Consume newline
+
+        for (int i = 0; i < n; i++) {
+            System.out.print("\nData " + (i + 1) + " - S.No: ");
+            int sno = s.nextInt();
+            pstm.setInt(1, sno);
+            s.nextLine(); // Consume newline
+
+            System.out.print("Enter name: ");
+            String name = s.nextLine();
+            pstm.setString(2, name);
+
+            System.out.print("Enter telephone: ");
+            String telephone = s.nextLine();
+            pstm.setString(3, telephone);
+
+            System.out.print("Enter gender: ");
+            String gender = s.nextLine();
+            pstm.setString(4, gender);
+
+            pstm.executeUpdate(); // Execute the prepared statement
+        }
+
+        ResultSet rs = stmt.executeQuery("SELECT * FROM textbk"); // Use ResultSet to hold query result
+        while (rs.next()) {
+            System.out.println(rs.getInt(1) + "\t" + rs.getString(2) + "\t" + rs.getString(3) + "\t" + rs.getString(4));
+        }
+
+        rs.close();
+        stmt.close();
+        pstm.close();
+        con.close();
+    }
+}

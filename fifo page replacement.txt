@@ -1,0 +1,66 @@
+import java.util.*;
+
+public class Mock {
+    public static void main(String args[]) {
+        Scanner s = new Scanner(System.in);
+        System.out.print("Enter length of frame: ");
+        int n = s.nextInt();
+        System.out.print("Enter length of reference string: ");
+        int t = s.nextInt();
+        
+        int[] ref = new int[t]; // Reference array should be of length t
+        int[] buff = new int[n]; // Buffer for frames
+        int[][] mem = new int[t][n]; // Memory array (optional, depending on use)
+        
+        System.out.println("Enter reference string:");
+        for (int i = 0; i < t; i++) {
+            ref[i] = s.nextInt();
+        }
+        
+        // Initialize the buffer
+        Arrays.fill(buff, -1);
+        
+        int hit = 0;
+        int fault = 0;
+        int pointer = 0;
+        
+        // Process reference string
+        for (int i = 0; i < t; i++) {
+            boolean found = false;
+            for (int j = 0; j < n; j++) {
+                if (buff[j] == ref[i]) {
+                    found = true;
+                    hit++;
+                    break;
+                }
+            }
+            if (!found) {
+                buff[pointer] = ref[i];
+                fault++;
+                pointer++;
+                if (pointer == n) {
+                    pointer = 0; // Loop back to the start of the buffer
+                }
+            }
+
+            // Store the current state of the buffer in mem (optional)
+            for (int j = 0; j < n; j++) {
+                mem[i][j] = buff[j];
+            }
+        }
+
+        // Print final memory and results
+        System.out.println("Memory state:");
+        for (int i = 0; i < t; i++) {
+            for (int j = 0; j < n; j++) {
+                System.out.print(mem[i][j] + " ");
+            }
+            System.out.println();
+        }
+        
+        System.out.println("Number of hits: " + hit);
+        System.out.println("Number of faults: " + fault);
+        System.out.println("hit ratio:" + (float)hit/t);
+        s.close(); // Close the scanner after use
+    }
+}
